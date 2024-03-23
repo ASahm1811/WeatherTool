@@ -3,7 +3,8 @@ const apiKey = "576b7150a9477b8171e12f98b0eb0d99";
 const apiUrl = "https://api.openweathermap.org/data/2.5/weather?units=metric&q=";
 
 const searchBox = document.querySelector(".search input");
-const searchBtn = document.querySelector(".search button");
+const searchBtn = document.querySelector(".search-button");
+const deleteBtn = document.querySelector(".delete-img");
 let weatherIcon = document.querySelector(".weather-icon");
 let weatherStattxt = document.querySelector(".weather-status");
 let weatherTime = document.querySelector(".weather-time")
@@ -20,7 +21,7 @@ function getDirection(degrees) {
         }
     }
 
-    console.log(directionDegrees)
+    // console.log(directionDegrees)
     if (directionDegrees === 0) {
         direction = "N";
     }
@@ -147,6 +148,14 @@ searchBtn.addEventListener("click", () => {
     }
 })
 
+deleteBtn.addEventListener("click", () => {
+    if (searchBox.value.length > 0) {
+        searchBox.value = "";
+        document.querySelector(".disc").style.display = "block";
+        document.querySelector(".error").style.display = "none";
+    }
+})
+
 document.addEventListener("keydown", (event) => {
     if (event.key === "Enter") {
         if (searchBox.value === "") {
@@ -164,3 +173,15 @@ if (performance.getEntriesByType("navigation")[0].type === "reload") {
 }
 
 document.querySelector(".disc").style.display = "block";
+document.querySelector(".blank").style.display = "block";
+
+setInterval(() => {
+    if (searchBox.value.length > 0) {
+        document.querySelector(".blank").style.display = "none";
+        document.querySelector(".delete-img").style.display = "block";
+        }
+    else if (searchBox.value.length === 0) {
+        document.querySelector(".blank").style.display = "block";
+        document.querySelector(".delete-img").style.display = "none";
+    }
+});
