@@ -75,6 +75,86 @@ function getDirection(degrees) {
     return direction;
 }
 
+// show time in "real time"
+function showTime(data) {
+    setInterval(() => {
+        // UTC
+        let date = new Date();
+        let time = date.toLocaleString("en-GB", {timeZone: "Europe/London"})
+            .split(",")[1].split(":");
+
+        // console.log(time)
+        let addHoursList = (data.timezone/3600).toString().split(".");
+        // console.log(addHoursList)
+        let negativeTimeZone = false;
+        if (parseInt(addHoursList[0]) < 0) {
+            negativeTimeZone = true;
+        }
+        let sumHours = (parseInt(time[0]) + parseInt(addHoursList[0]));
+        // console.log(sumHours)
+        let day = date.toDateString().split(" ")[0];
+        console.log(date.toDateString())
+        let indexOfDay = days.indexOf(day);
+        if (sumHours < 0) {
+            if (indexOfDay === 0) {
+                indexOfDay = 7;
+            }
+            day = days[indexOfDay - 1];
+        }
+        if (sumHours >= 24) {
+            if (indexOfDay === 6) {
+                indexOfDay = -1;
+            }
+            day = days[indexOfDay + 1];
+        }
+
+        let hour = (((sumHours % 24) + 24) % 24);
+        // console.log(hour)
+        let minute = parseInt(time[1]);
+        // console.log(minute)
+        if (addHoursList.length > 1) {
+            if (negativeTimeZone) {
+                minute = parseInt(time[1]) - (parseFloat("0." + addHoursList[1]) * 60);
+            }
+            else {
+                minute = parseInt(time[1]) + (parseFloat("0." + addHoursList[1]) * 60);
+            }
+        }
+        // console.log(minute)
+        if (minute < 0) {
+            hour = hour - 1;
+            if (hour < 0) {
+                if (indexOfDay === 0) {
+                    indexOfDay = 7;
+                }
+                day = days[indexOfDay + 1];
+            }
+        }
+        if (minute >= 60) {
+            hour = hour + 1;
+            if (hour >= 24) {
+                if (indexOfDay === 6) {
+                    indexOfDay = -1;
+                }
+                day = days[indexOfDay + 1];
+            }
+        }
+        hour = (((hour % 24) + 24) % 24);
+        minute = (((minute % 60) + 60) % 60);
+
+        // add prefix '0'
+        if (hour < 10) {
+            hour = "0" + hour;
+        }
+        if (minute < 10) {
+            minute = "0" + minute;
+        }
+
+        // format time
+        weatherTime.innerHTML = `${day}, ` + hour + ":" + minute + ":" + time[2];
+
+    }, 100);
+}
 
 async function getWeatherInfo(city) {
     const response = await fetch(apiUrl + `${city}&appid=${apiKey}`);
@@ -96,63 +176,8 @@ async function getWeatherInfo(city) {
         weatherStattxt.innerHTML = data.weather[0].description.at(0).toUpperCase() +
             data.weather[0].description.substring(1, data.weather[0].description.length);
 
-        // show time in "real time"
-        // TODO: add minus minutes feature
-        // setInterval(() => {
-        let date = new Date();
-        let time = date.toLocaleString("en-GB", {timeZone: "Europe/London"})
-            .split(",")[1].split(":")
-        let addHoursList = (data.timezone/3600).toString().split(".");
-        let sumHours = (parseInt(time[0]) + parseInt(addHoursList[0]));
-        let day = date.toDateString().split(" ")[0];
-        let indexOfDay = days.indexOf(date.toDateString().split(" ")[0]);
-        if (sumHours < 0) {
-            if (indexOfDay === 0) {
-                indexOfDay = 7;
-            }
-            day = days[indexOfDay - 1];
-        }
-        if (sumHours >= 24) {
-            if (indexOfDay === 6) {
-                indexOfDay = -1;
-            }
-            day = days[indexOfDay + 1];
-        }
 
-        let hour = (((sumHours % 24) + 24) % 24);
-        console.log(addHoursList)
-        console.log(time)
-        let minute = parseInt(time[1]);
-        if (addHoursList.length > 1) {
-            minute = ((((parseInt(time[1]) + (parseFloat("0." + addHoursList[1]) * 60)) % 60) + 60) % 60)
-        }
-        if (minute < 0) {
-            hour = hour + 1;
-            if (hour < 24) {
-                if (indexOfDay === 0) {
-                    indexOfDay = 7;
-                }
-                day = days[indexOfDay + 1];
-            }
-        }
-        if (minute >= 60) {
-            hour = hour + 1;
-            if (hour >= 24) {
-                if (indexOfDay === 6) {
-                    indexOfDay = -1;
-                }
-                day = days[indexOfDay + 1];
-            }
-        }
-        if (hour < 10) {
-            hour = "0" + hour;
-        }
-        if (minute < 10) {
-            minute = "0" + minute;
-        }
-        weatherTime.innerHTML = `${day}, ` + hour + ":" + minute + ":" + time[2];
-
-        // });
+        showTime(data);
 
         document.querySelector(".city").innerHTML = data.name + ", " +
             regionNamesInEnglish.of(data.sys.country);
