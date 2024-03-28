@@ -8,9 +8,10 @@ const deleteBtn = document.querySelector(".delete-img");
 let weatherIcon = document.querySelector(".weather-icon");
 let weatherStattxt = document.querySelector(".weather-status");
 let weatherTime = document.querySelector(".weather-time")
+const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
 
 function getDirection(degrees) {
-    let min = Number.POSITIVE_INFINITY;
+    let min  = Number.POSITIVE_INFINITY;
     let directionDegrees;
     let direction;
 
@@ -73,6 +74,8 @@ function getDirection(degrees) {
 
     return direction;
 }
+
+
 async function getWeatherInfo(city) {
     const response = await fetch(apiUrl + `${city}&appid=${apiKey}`);
 
@@ -94,14 +97,62 @@ async function getWeatherInfo(city) {
             data.weather[0].description.substring(1, data.weather[0].description.length);
 
         // show time in "real time"
-        setInterval(() => {
-            let date = new Date();
-            let time = date.toLocaleString("en-GB", {timeZone: "Europe/London"})
-                .split(",")[1].split(":")
-            let hour = ((parseInt(time[0]) + (data.timezone/3600)) % 24).toString();
-            weatherTime.innerHTML = `${date.toDateString().split(" ")[0]}, ` +
-                hour + ":" + time[1] + ":" + time[2];
-        });
+        // TODO: add minus minutes feature
+        // setInterval(() => {
+        let date = new Date();
+        let time = date.toLocaleString("en-GB", {timeZone: "Europe/London"})
+            .split(",")[1].split(":")
+        let addHoursList = (data.timezone/3600).toString().split(".");
+        let sumHours = (parseInt(time[0]) + parseInt(addHoursList[0]));
+        let day = date.toDateString().split(" ")[0];
+        let indexOfDay = days.indexOf(date.toDateString().split(" ")[0]);
+        if (sumHours < 0) {
+            if (indexOfDay === 0) {
+                indexOfDay = 7;
+            }
+            day = days[indexOfDay - 1];
+        }
+        if (sumHours >= 24) {
+            if (indexOfDay === 6) {
+                indexOfDay = -1;
+            }
+            day = days[indexOfDay + 1];
+        }
+
+        let hour = (((sumHours % 24) + 24) % 24);
+        console.log(addHoursList)
+        console.log(time)
+        let minute = parseInt(time[1]);
+        if (addHoursList.length > 1) {
+            minute = ((((parseInt(time[1]) + (parseFloat("0." + addHoursList[1]) * 60)) % 60) + 60) % 60)
+        }
+        if (minute < 0) {
+            hour = hour + 1;
+            if (hour < 24) {
+                if (indexOfDay === 0) {
+                    indexOfDay = 7;
+                }
+                day = days[indexOfDay + 1];
+            }
+        }
+        if (minute >= 60) {
+            hour = hour + 1;
+            if (hour >= 24) {
+                if (indexOfDay === 6) {
+                    indexOfDay = -1;
+                }
+                day = days[indexOfDay + 1];
+            }
+        }
+        if (hour < 10) {
+            hour = "0" + hour;
+        }
+        if (minute < 10) {
+            minute = "0" + minute;
+        }
+        weatherTime.innerHTML = `${day}, ` + hour + ":" + minute + ":" + time[2];
+
+        // });
 
         document.querySelector(".city").innerHTML = data.name + ", " +
             regionNamesInEnglish.of(data.sys.country);
@@ -138,6 +189,7 @@ async function getWeatherInfo(city) {
     }
 
 }
+
 searchBtn.addEventListener("click", () => {
     if (searchBox.value === "") {
         document.querySelector(".disc").style.display = "block";
@@ -176,11 +228,14 @@ document.querySelector(".disc").style.display = "block";
 document.querySelector(".blank").style.display = "block";
 
 setInterval(() => {
+    // console.log("checktextinput")
     if (searchBox.value.length > 0) {
         document.querySelector(".blank").style.display = "none";
         document.querySelector(".delete-img").style.display = "block";
         }
     else if (searchBox.value.length === 0) {
+        document.querySelector(".disc").style.display = "block";
+        document.querySelector(".error").style.display = "none";
         document.querySelector(".blank").style.display = "block";
         document.querySelector(".delete-img").style.display = "none";
     }
