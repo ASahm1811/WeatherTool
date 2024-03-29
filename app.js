@@ -165,6 +165,9 @@ async function getWeatherInfo(city) {
     }
     else if (response.status === 200) {
         document.querySelector(".disc").style.display = "none";
+        document.querySelector(".weather").style.display = "block";
+        document.querySelector(".error").style.display = "none";
+        
         let data = await response.json();
 
         // print response
@@ -206,10 +209,11 @@ async function getWeatherInfo(city) {
         else if (weatherStatusIcon === "Snow") {
             weatherIcon.src = "images/snow.png";
         }
+        else if (weatherStatusIcon === "Haze") {
+            weatherIcon.src = "images/haze.png";
+        }
 
 
-        document.querySelector(".weather").style.display = "block";
-        document.querySelector(".error").style.display = "none";
     }
 
 }
