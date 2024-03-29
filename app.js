@@ -92,9 +92,8 @@ function showTime(data) {
         }
         let sumHours = (parseInt(time[0]) + parseInt(addHoursList[0]));
         // console.log(sumHours)
-        let day = date.toDateString().split(" ")[0];
-        console.log(date.toDateString())
-        let indexOfDay = days.indexOf(day);
+        let day = days[date.getUTCDay()];
+        let indexOfDay = date.getUTCDay();
         if (sumHours < 0) {
             if (indexOfDay === 0) {
                 indexOfDay = 7;
@@ -183,8 +182,8 @@ async function getWeatherInfo(city) {
             regionNamesInEnglish.of(data.sys.country);
         document.querySelector(".temp").innerHTML = Math.round(data.main.temp) + "°C";
         document.querySelector(".humidity").innerHTML = data.main.humidity + "%";
-        document.querySelector(".wind").innerHTML = data.wind.speed + " km/h";
-        document.querySelector(".direction").innerHTML = "Direction: " + getDirection(data.wind.deg);
+        document.querySelector(".wind-speed").innerHTML = data.wind.speed + " km/h";
+        document.querySelector(".wind-direction").innerHTML = getDirection(data.wind.deg);
 
 
         let weatherStatusIcon = data.weather[0].main;

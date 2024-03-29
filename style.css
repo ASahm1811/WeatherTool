@@ -97,13 +97,14 @@ body {
     align-items: center;
     justify-content: space-between;
     padding: 0 20px;
-    margin-top: 50px;
+    margin-top: 30px;
+    border-style: solid;
+    border-radius: 5px;
 }
 
 .col {
     display: flex;
     align-items: center;
-    text-align: left;
 }
 
 .col img {
@@ -112,9 +113,32 @@ body {
     margin-bottom: 15px;
 }
 
-.humidity, .wind {
-    font-size: 28px;
+.humidity {
+    font-size: 34px;
+    margin-bottom: -5px;
+}
+
+.hum-text {
+    font-weight: bold;
     margin-top: 30px;
+    margin-bottom: 0px;
+}
+
+.wind-speed {
+    font-size: 22px;
+    margin-top: 35px;
+    margin-bottom: -30px;
+}
+
+.wind-direction {
+    font-size: 17px;
+    margin-top: 40px;
+    margin-bottom: -30px;
+}
+
+.wind-text {
+    margin-top: 50px;
+    font-weight: bold;
 }
 
 .weather {
