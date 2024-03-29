@@ -167,7 +167,7 @@ async function getWeatherInfo(city) {
         document.querySelector(".disc").style.display = "none";
         document.querySelector(".weather").style.display = "block";
         document.querySelector(".error").style.display = "none";
-        
+
         let data = await response.json();
 
         // print response
@@ -186,7 +186,7 @@ async function getWeatherInfo(city) {
         document.querySelector(".temp").innerHTML = Math.round(data.main.temp) + "°C";
         document.querySelector(".humidity").innerHTML = data.main.humidity + "%";
         document.querySelector(".wind-speed").innerHTML = data.wind.speed + " km/h";
-        document.querySelector(".wind-direction").innerHTML = getDirection(data.wind.deg);
+        document.querySelector(".wind-direction").innerHTML = "Direction: " + getDirection(data.wind.deg);
 
 
         let weatherStatusIcon = data.weather[0].main;

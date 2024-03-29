@@ -102,6 +102,13 @@ body {
     border-radius: 5px;
 }
 
+.vl {
+    border-left: 2px dashed silver;
+    height: 120px;
+    position: absolute;
+    left: 49%;
+}
+
 .col {
     display: flex;
     align-items: center;
@@ -120,8 +127,8 @@ body {
 
 .hum-text {
     font-weight: bold;
-    margin-top: 50px;
-    margin-bottom: 0px;
+    margin-top: 45px;
+    margin-bottom: 0;
 }
 
 .wind-speed {
